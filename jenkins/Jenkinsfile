@@ -17,7 +17,7 @@ pipeline {
     //     CI = 'true'
     // }
     stages {
-        stage('Local Stage') {
+        stages('Local Stage') {
             agent {
                 docker {
                     // image 'node:lts-buster-slim'
@@ -25,17 +25,17 @@ pipeline {
                     args '-p 3000:3000'
                 }
             }
-            stages('Build') {
+            stage('Build') {
                 steps {
                     sh 'npm install'
                 }
             }
-            stages('Test') {
+            stage('Test') {
                 steps {
                     sh './jenkins/scripts/test.sh'
                 }
             }
-            stages('Deploy') { 
+            stage('Deploy') { 
                 steps {
                     input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
                     sh './jenkins/scripts/deliver.sh' 
@@ -44,7 +44,7 @@ pipeline {
                 }
             }
         }
-        stage('Deploy-to-render') { 
+        stages('Deploy-to-render') { 
             agent any
             steps {
                 sh 'docker build -t danurwijayanto/dicoding-react-ci-cd:latest -f jenkins/Dockerfile'
