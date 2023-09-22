@@ -17,7 +17,7 @@ pipeline {
     //     CI = 'true'
     // }
     stages {
-        stage('Build') {
+        stage('Local Stage') {
             agent {
                 docker {
                     // image 'node:lts-buster-slim'
@@ -25,21 +25,23 @@ pipeline {
                     args '-p 3000:3000'
                 }
             }
-            steps {
-                sh 'npm install'
+            stage('Build') {
+                steps {
+                    sh 'npm install'
+                }
             }
-        }
-        stage('Test') {
-            steps {
-                sh './jenkins/scripts/test.sh'
+            stage('Test') {
+                steps {
+                    sh './jenkins/scripts/test.sh'
+                }
             }
-        }
-        stage('Deploy') { 
-            steps {
-                input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
-                sh './jenkins/scripts/deliver.sh' 
-                sh 'sleep 60'
-                sh './jenkins/scripts/kill.sh' 
+            stage('Deploy') { 
+                steps {
+                    input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
+                    sh './jenkins/scripts/deliver.sh' 
+                    sh 'sleep 60'
+                    sh './jenkins/scripts/kill.sh' 
+                }
             }
         }
         stage('Deploy-to-render') { 
