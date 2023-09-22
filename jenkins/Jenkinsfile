@@ -49,7 +49,7 @@ pipeline {
         stage('Deploy-to-render') { 
             agent any
             steps {
-                sh 'docker build -t danurwijayanto/dicoding-react-ci-cd:latest -f jenkins/Dockerfile'
+                sh 'docker build -t danurwijayanto/dicoding-react-ci-cd:latest -f jenkins/Dockerfile .'
                 sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
                 sh 'docker push danurwijayanto/dicoding-react-ci-cd:latest'
                 sh 'docker logout'
