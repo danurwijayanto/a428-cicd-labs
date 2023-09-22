@@ -29,8 +29,8 @@ pipeline {
             steps {
                 // input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
                 sh './jenkins/scripts/deliver.sh' 
-                // sh 'sleep 60'
-                // sh './jenkins/scripts/kill.sh' 
+                sh 'sleep 60'
+                sh './jenkins/scripts/kill.sh' 
             }
         }
     }
