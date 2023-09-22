@@ -25,17 +25,17 @@ pipeline {
                     args '-p 3000:3000'
                 }
             }
-            stage('Build') {
+            stages('Build') {
                 steps {
                     sh 'npm install'
                 }
             }
-            stage('Test') {
+            stages('Test') {
                 steps {
                     sh './jenkins/scripts/test.sh'
                 }
             }
-            stage('Deploy') { 
+            stages('Deploy') { 
                 steps {
                     input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
                     sh './jenkins/scripts/deliver.sh' 
