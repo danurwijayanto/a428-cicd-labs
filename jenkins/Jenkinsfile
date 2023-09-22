@@ -17,7 +17,7 @@ pipeline {
     //     CI = 'true'
     // }
     stages {
-        stage('Local Stage') {
+        stage('LocalStage') {
             agent {
                 docker {
                     // image 'node:lts-buster-slim'
