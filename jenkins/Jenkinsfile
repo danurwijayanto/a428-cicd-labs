@@ -1,66 +1,37 @@
 pipeline {
-    agent none
-    // {
-    //     docker {
-    //         // image 'node:lts-buster-slim'
-    //         image 'node:16-buster-slim' 
-    //         args '-p 3000:3000'
-    //     }
-    // }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
-    }
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    agent {
+        docker {
+            image 'node:lts-buster-slim'
+            // image 'node:16-buster-slim' 
+            args '-p 3000:3000'
+        }
     }
     // environment {
     //     CI = 'true'
     // }
     stages {
-        stage('LocalStage') {
-            agent {
-                docker {
-                    // image 'node:lts-buster-slim'
-                    image 'node:16-buster-slim' 
-                    args '-p 3000:3000'
-                }
-            }
-            stages {
-                stage('Build') {
-                    steps {
-                        sh 'npm install'
-                    }
-                }
-                stage('Test') {
-                    steps {
-                        sh './jenkins/scripts/test.sh'
-                    }
-                }
-                stage('Deploy') { 
-                    steps {
-                        input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
-                        sh './jenkins/scripts/deliver.sh' 
-                        sh 'sleep 60'
-                        sh './jenkins/scripts/kill.sh' 
-                    }
-                }
-            }
-        }
-        stage('Deploy-to-render') { 
-            agent any
+        stage('Build') {
             steps {
-                sh 'docker build -t danurwijayanto/dicoding-react-ci-cd:latest -f jenkins/Dockerfile .'
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-                sh 'docker push danurwijayanto/dicoding-react-ci-cd:latest'
-                sh 'docker logout'
+                sh 'npm install'
             }
         }
-        // stage('Deliver') {
-        //     steps {
-        //         sh './jenkins/scripts/deliver.sh'
-        //         input message: 'Finished using the website? (Click "Proceed" to continue)'
-        //         sh './jenkins/scripts/kill.sh'
-        //     }
-        // }
+        stage('Test') {
+            steps {
+                sh './jenkins/scripts/test.sh'
+            }
+        }
+        stage('ManualApproval') {
+            steps {
+                input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
+            }
+        }
+        stage('Deploy') { 
+            steps {
+                // input message: 'Lanjutkan ke tahap deploy? (Klik "Proceed" untuk melanjutkan ke tahap deploy)' 
+                sh './jenkins/scripts/deliver.sh' 
+                sh 'sleep 60'
+                sh './jenkins/scripts/kill.sh' 
+            }
+        }
     }
 }
