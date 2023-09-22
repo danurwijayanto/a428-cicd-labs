@@ -6,6 +6,12 @@ pipeline {
             args '-p 3000:3000'
         }
     }
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+    }
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+    }
     // environment {
     //     CI = 'true'
     // }
@@ -26,6 +32,14 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh' 
                 sh 'sleep 60'
                 sh './jenkins/scripts/kill.sh' 
+            }
+        }
+        stage('Deploy-to-render') { 
+            steps {
+                sh 'docker build -t danurwijayanto/dicoding-react-ci-cd:latest -f jenkins/Dockerfile'
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                sh 'docker push danurwijayanto/dicoding-react-ci-cd:latest'
+                sh 'docker logout'
             }
         }
         // stage('Deliver') {
