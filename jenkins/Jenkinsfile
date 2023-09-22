@@ -1,11 +1,12 @@
 pipeline {
-    agent {
-        docker {
-            // image 'node:lts-buster-slim'
-            image 'node:16-buster-slim' 
-            args '-p 3000:3000'
-        }
-    }
+    agent none
+    // {
+    //     docker {
+    //         // image 'node:lts-buster-slim'
+    //         image 'node:16-buster-slim' 
+    //         args '-p 3000:3000'
+    //     }
+    // }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
     }
@@ -17,6 +18,13 @@ pipeline {
     // }
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    // image 'node:lts-buster-slim'
+                    image 'node:16-buster-slim' 
+                    args '-p 3000:3000'
+                }
+            }
             steps {
                 sh 'npm install'
             }
